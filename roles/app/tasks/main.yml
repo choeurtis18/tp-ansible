@@ -1,0 +1,24 @@
+---
+- name: Copier les fichiers de l'application
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/var/www/todo/{{ item }}"
+    owner: www-data
+    group: www-data
+    mode: 0755
+  with_items:
+    - Dockerfile
+    - docker-compose.yml
+    - src/
+    - public/
+    - .env
+
+- name: Installer les dépendances avec npm
+  ansible.builtin.shell: npm install
+  args:
+    chdir: /var/www/todo
+
+- name: Lancer l'application avec Docker Compose
+  ansible.builtin.shell: docker-compose up -d
+  args:
+    chdir: /var/www/todo

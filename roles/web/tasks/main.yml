@@ -1,0 +1,38 @@
+---
+- name: Installer les dépendances
+  ansible.builtin.apt:
+    name:
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+    update_cache: yes
+
+- name: Ajouter le dépôt Node.js
+  ansible.builtin.shell: |
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+  args:
+    warn: false
+
+- name: Installer Node.js
+  ansible.builtin.apt:
+    name: nodejs
+    state: present
+
+- name: Configurer le fichier Nginx
+  ansible.builtin.template:
+    src: vhost.j2
+    dest: /etc/nginx/sites-available/todo
+  notify: Restart nginx
+
+- name: Activer le vhost
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/todo
+    dest: /etc/nginx/sites-enabled/todo
+    state: link
+    force: yes
+
+- name: Redémarrer Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
