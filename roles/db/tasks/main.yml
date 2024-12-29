@@ -1,0 +1,17 @@
+---
+- name: Installer MySQL
+  ansible.builtin.apt:
+    name: mysql-server
+    state: present
+    update_cache: yes
+
+- name: Créer un fichier d'initialisation pour MySQL
+  ansible.builtin.copy:
+    src: init.sql
+    dest: /tmp/init.sql
+  notify: Restart MySQL
+
+- name: Exécuter le script SQL pour initialiser la base
+  ansible.builtin.shell: mysql < /tmp/init.sql
+  args:
+    warn: false

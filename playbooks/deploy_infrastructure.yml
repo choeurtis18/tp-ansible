@@ -1,0 +1,12 @@
+---
+- name: Déployer l'infrastructure
+  hosts: all
+  become: true
+
+  roles:
+    - role: web
+      tags: web
+    - role: db
+      tags: db
+    - role: app
+      tags: app

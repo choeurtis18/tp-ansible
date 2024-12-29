@@ -1,0 +1,20 @@
+---
+- name: Déployer le projet Todo
+  hosts: app
+  become: true
+
+  tasks:
+    - name: Mettre à jour le code source
+      ansible.builtin.git:
+        repo: "https://votre-repo-git/todo.git"
+        dest: "/var/www/todo"
+
+    - name: Installer les dépendances
+      ansible.builtin.shell: npm install
+      args:
+        chdir: /var/www/todo
+
+    - name: Redémarrer l'application
+      ansible.builtin.shell: docker-compose restart
+      args:
+        chdir: /var/www/todo
