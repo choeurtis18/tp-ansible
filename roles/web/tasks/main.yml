@@ -1,4 +1,10 @@
 ---
+- name: Installer Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
 - name: Installer les dépendances
   ansible.builtin.apt:
     name:
@@ -12,12 +18,23 @@
   ansible.builtin.shell: |
     curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
   args:
-    warn: false
 
 - name: Installer Node.js
   ansible.builtin.apt:
     name: nodejs
     state: present
+
+- name: Créer le répertoire /etc/nginx/sites-available
+  ansible.builtin.file:
+    path: /etc/nginx/sites-available
+    state: directory
+    mode: '0755'
+
+- name: Créer le répertoire /etc/nginx/sites-enabled
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled
+    state: directory
+    mode: '0755'
 
 - name: Configurer le fichier Nginx
   ansible.builtin.template:

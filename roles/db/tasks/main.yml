@@ -13,5 +13,3 @@
 
 - name: Exécuter le script SQL pour initialiser la base
   ansible.builtin.shell: mysql < /tmp/init.sql
-  args:
-    warn: false

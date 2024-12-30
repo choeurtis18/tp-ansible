@@ -41,8 +41,14 @@ app.delete('/todos/:id', async (req, res) => {
 
 // Route par défaut pour la racine (http://localhost:3000)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'index.html'));
+    res.sendFile(path.join(__dirname, './public', 'index.html'));
 });
+
+app.get('/app.js', (req, res) => {
+    res.type('application/javascript');
+    res.sendFile(path.join(__dirname, 'public', 'app.js'));
+  });
+  
 
 // Démarrage du serveur
 const PORT = process.env.PORT || 3000;

@@ -1,5 +1,6 @@
 CREATE DATABASE IF NOT EXISTS todo_db;
-CREATE USER 'user'@'%' IDENTIFIED BY 'password';
+
+CREATE USER IF NOT EXISTS 'user'@'%' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON todo_db.* TO 'user'@'%';
 FLUSH PRIVILEGES;
 
