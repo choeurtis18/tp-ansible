@@ -8,6 +8,17 @@
     project_path: "/var/www/todo"
 
   tasks:
+    - name: Vérifier si le répertoire du projet existe
+      ansible.builtin.stat:
+        path: "{{ project_path }}"
+      register: project_dir_status
+
+    - name: Supprimer le répertoire existant si nécessaire
+      ansible.builtin.file:
+        path: "{{ project_path }}"
+        state: absent
+      when: project_dir_status.stat.exists
+
     - name: Cloner ou mettre à jour le dépôt Git
       ansible.builtin.git:
         repo: "{{ repo_url }}"
@@ -15,11 +26,28 @@
         version: main
         update: yes
 
+    - name: Copier le fichier docker-compose.yml
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../roles/app/files/docker-compose.yml"
+        dest: "{{ project_path }}/docker-compose.yml"
+
+    - name: Vérifier si le fichier package.json existe
+      ansible.builtin.stat:
+        path: "{{ project_path }}/package.json"
+      register: package_json_status
+
     - name: Installer les dépendances
       ansible.builtin.shell: npm install
       args:
         chdir: "{{ project_path }}"
+      when: package_json_status.stat.exists
 
+    - name: Lancer l'application avec Docker Compose
+      ansible.builtin.shell: docker-compose up -d
+      args:
+        chdir: "{{ project_path }}"
+
+  handlers:
     - name: Redémarrer l'application avec Docker Compose
       ansible.builtin.shell: docker-compose restart
       args:
