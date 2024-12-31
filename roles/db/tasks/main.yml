@@ -5,11 +5,36 @@
     state: present
     update_cache: yes
 
-- name: Créer un fichier d'initialisation pour MySQL
+- name: Copier le script d'initialisation pour MySQL
   ansible.builtin.copy:
     src: init.sql
     dest: /tmp/init.sql
   notify: Restart MySQL
 
+- name: Charger les variables depuis group_vars/all.yml
+  ansible.builtin.include_vars:
+    file: ../../group_vars/all.yml
+
+
+- name: Vérifier les variables MySQL
+  ansible.builtin.debug:
+    var: "{{ item }}"
+  loop:
+    - db_host
+    - db_user
+    - db_password
+    - db_name
+    - mysql_root_password
+
+- name: Vérifier la connexion MySQL
+  ansible.builtin.shell: >
+    mysqladmin -u{{ db_user }} -h{{ db_host }} ping
+  environment:
+    MYSQL_PWD: "{{ db_password }}"
+
 - name: Exécuter le script SQL pour initialiser la base
-  ansible.builtin.shell: mysql < /tmp/init.sql
+  ansible.builtin.shell: >
+    mysql -uroot -h{{ db_host }} < /tmp/init.sql
+  environment:
+    MYSQL_PWD: "{{ mysql_root_password }}"
+

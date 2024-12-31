@@ -9,7 +9,6 @@
   with_items:
     - { src: "Dockerfile", dest: "/var/www/todo/Dockerfile" }
     - { src: "docker-compose.yml", dest: "/var/www/todo/docker-compose.yml" }
-    - { src: "src/", dest: "/var/www/todo/src", mode: "0755" }
     - { src: "public/", dest: "/var/www/todo/public", mode: "0755" }
     - { src: "app.js", dest: "/var/www/todo/app.js", mode: "0644" }
     - { src: "db.js", dest: "/var/www/todo/db.js", mode: "0644" }
