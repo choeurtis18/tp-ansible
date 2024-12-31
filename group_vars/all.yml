@@ -3,3 +3,4 @@ db_user: user
 db_password: password
 db_name: todo_db
 mysql_root_password: root
+db_port: 3307

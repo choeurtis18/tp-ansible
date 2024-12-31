@@ -14,7 +14,6 @@
     - { src: "db.js", dest: "/var/www/todo/db.js", mode: "0644" }
     - { src: ".env", dest: "/var/www/todo/.env", mode: "0644" }
 
-
 - name: Installer les dépendances avec npm
   ansible.builtin.shell: npm install
   args:
@@ -24,3 +23,8 @@
   ansible.builtin.shell: docker-compose up -d
   args:
     chdir: /var/www/todo
+
+- name: Notifier que Docker Compose est actif
+  ansible.builtin.set_fact:
+    docker_compose_active: true
+    cacheable: true

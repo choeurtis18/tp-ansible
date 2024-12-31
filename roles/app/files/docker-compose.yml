@@ -11,7 +11,8 @@ services:
       DB_PASSWORD: password
       DB_NAME: todo_db
     depends_on:
-      - mysql
+       mysql:
+        condition: service_healthy
     volumes:
     - ./app.js:/app/app.js
      - ./public:/app/public

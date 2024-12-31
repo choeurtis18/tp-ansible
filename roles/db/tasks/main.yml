@@ -15,26 +15,77 @@
   ansible.builtin.include_vars:
     file: ../../group_vars/all.yml
 
-
 - name: Vérifier les variables MySQL
   ansible.builtin.debug:
     var: "{{ item }}"
   loop:
     - db_host
+    - db_port
     - db_user
     - db_password
     - db_name
     - mysql_root_password
 
+- name: Attendre que Docker Compose démarre MySQL
+  ansible.builtin.wait_for:
+    host: "{{ db_host }}"
+    port: "{{ db_port }}"
+    delay: 10
+    timeout: 120
+    state: started
+  when: docker_compose_active | default(false)
+
 - name: Vérifier la connexion MySQL
-  ansible.builtin.shell: >
-    mysqladmin -u{{ db_user }} -h{{ db_host }} ping
+  ansible.builtin.command: >
+    mysqladmin -u{{ db_user }} -P{{ db_port }} -h{{ db_host }} --protocol=TCP ping
   environment:
     MYSQL_PWD: "{{ db_password }}"
+  register: mysql_ping_result
+  retries: 5
+  delay: 5
+  until: mysql_ping_result.rc == 0
+
+- name: Afficher les résultats de la connexion MySQL
+  ansible.builtin.debug:
+    msg: "Connexion MySQL réussie : {{ mysql_ping_result }}"
 
 - name: Exécuter le script SQL pour initialiser la base
-  ansible.builtin.shell: >
-    mysql -uroot -h{{ db_host }} < /tmp/init.sql
+  ansible.builtin.command: >
+    mysql -u{{ db_user }} -P{{ db_port }} -h{{ db_host }} --protocol=TCP < /tmp/init.sql
   environment:
     MYSQL_PWD: "{{ mysql_root_password }}"
+  register: mysql_init_result
+  ignore_errors: yes
 
+- name: Vérifier si la table `todos` existe
+  ansible.builtin.command: >
+    mysql -u{{ db_user }} -P{{ db_port }} -h{{ db_host }} --protocol=TCP -e
+    "USE {{ db_name }}; SHOW TABLES LIKE 'todos';"
+  environment:
+    MYSQL_PWD: "{{ db_password }}"
+  register: table_check_result
+  retries: 5
+  delay: 5
+  until: table_check_result.rc == 0
+  ignore_errors: yes
+
+- name: Afficher le résultat de la vérification de la table
+  ansible.builtin.debug:
+    msg: "Résultat de la vérification de la table todos : {{ table_check_result.stdout }}"
+
+- name: Créer la table todos si elle n'existe pas
+  ansible.builtin.command: >
+    mysql -u{{ db_user }} -P{{ db_port }} -h{{ db_host }} --protocol=TCP -e
+    "USE {{ db_name }}; CREATE TABLE IF NOT EXISTS todos (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      title VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );"
+  environment:
+    MYSQL_PWD: "{{ db_password }}"
+  when: "'todos' not in table_check_result.stdout"
+  register: table_creation_result
+
+- name: Afficher le résultat de la création de la table
+  ansible.builtin.debug:
+    msg: "Résultat de la création de la table todos : {{ table_creation_result.stdout }}"

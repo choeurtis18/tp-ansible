@@ -3,3 +3,12 @@
   ansible.builtin.service:
     name: mysql
     state: restarted
+
+- name: Wait for MySQL to be ready
+  ansible.builtin.wait_for:
+    host: "{{ db_host }}"
+    port: "{{ db_port }}"
+    delay: 5
+    timeout: 90
+    state: started
+  listen: "Restart MySQL"

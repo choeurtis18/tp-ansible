@@ -3,18 +3,24 @@
   hosts: app
   become: true
 
+  vars:
+    repo_url: "https://github.com/choeurtis18/tp-ansible"
+    project_path: "/var/www/todo"
+
   tasks:
-    - name: Mettre à jour le code source
+    - name: Cloner ou mettre à jour le dépôt Git
       ansible.builtin.git:
-        repo: "https://votre-repo-git/todo.git"
-        dest: "/var/www/todo"
+        repo: "{{ repo_url }}"
+        dest: "{{ project_path }}"
+        version: main
+        update: yes
 
     - name: Installer les dépendances
       ansible.builtin.shell: npm install
       args:
-        chdir: /var/www/todo
+        chdir: "{{ project_path }}"
 
-    - name: Redémarrer l'application
+    - name: Redémarrer l'application avec Docker Compose
       ansible.builtin.shell: docker-compose restart
       args:
-        chdir: /var/www/todo
+        chdir: "{{ project_path }}"

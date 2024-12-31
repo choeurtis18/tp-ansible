@@ -6,7 +6,7 @@
   roles:
     - role: web
       tags: web
-    - role: db
-      tags: db
     - role: app
       tags: app
+    - role: db
+      tags: db
