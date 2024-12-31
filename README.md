@@ -21,10 +21,14 @@ Ce projet a été conçu dans le cadre d'un TP visant à automatiser le déploie
 Le projet a été développé from scratch pour répondre aux objectifs pédagogiques du TP.
 
 Caractéristiques :
-Frontend minimal : Une interface HTML/JavaScript accessible depuis un navigateur.
-Backend : API Node.js pour gérer les tâches.
-Base de données : MySQL pour le stockage.
-Déploiement : Automatisé via Docker, Docker Compose et Ansible.
+Frontend minimal : Une interface HTML/JavaScript accessible depuis un navigateur.  
+
+Backend : API Node.js pour gérer les tâches.   
+
+Base de données : MySQL pour le stockage.  
+
+Déploiement : Automatisé via Docker, Docker Compose et Ansible.   
+
 Lien vers le dépôt Git : https://github.com/choeurtis18/tp-ansible
 
 
@@ -60,8 +64,10 @@ DB_NAME=todo_db
 1. Déployer l'infrastructure
 Ce playbook configure les services nécessaires pour faire fonctionner l'application :
 
-Installation de Nginx, MySQL, et Docker.
-Configuration des bases de données et des fichiers nécessaires.
+Installation de Nginx, MySQL, et Docker.  
+
+Configuration des bases de données et des fichiers nécessaires.   
+
 Exécutez la commande suivante :
 
 ```bash
@@ -72,9 +78,12 @@ ansible-playbook -i inventory/production playbooks/deploy_infrastructure.yml --a
 
 Ce playbook déploie l'application sur l'infrastructure configurée :
 
-Téléchargement du code depuis Git.
-Installation des dépendances.
-Lancement des conteneurs via Docker Compose.
+Téléchargement du code depuis Git.   
+
+Installation des dépendances.    
+
+Lancement des conteneurs via Docker Compose.   
+
 Exécutez la commande suivante :
 
 ```bash
@@ -92,5 +101,6 @@ URL : http://localhost:3000/
 ## 🔗 Membres du Groupe
 
 - Choeurtis : choeurtis18
+  
 - Mouhamadou : Mouhamadou-Soumare
 
